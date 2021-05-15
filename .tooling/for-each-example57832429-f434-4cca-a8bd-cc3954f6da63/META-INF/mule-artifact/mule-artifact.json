@@ -1,0 +1,29 @@
+{
+  "configs": [
+    "for-each-example.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "com.mycompany:for-each-example:1.0.0-SNAPSHOT",
+  "minMuleVersion": "4.3.0",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedPackages": [],
+      "exportedResources": [
+        "log4j2.xml",
+        "for-each-example.xml",
+        "config.yaml",
+        "sampleFile/Sample.csv",
+        "readFile/Sample.csv.2021_05_14_03_26_29_786.success",
+        "readFile/Sample.csv.2021_05_14_03_34_02_718.success",
+        "readFile/Sample.csv.2021_05_14_03_25_32_125.success"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

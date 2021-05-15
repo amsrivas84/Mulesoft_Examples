@@ -1,0 +1,125 @@
+[
+  
+][
+  {
+    "customer_address": "k",
+    "customer_name": "g",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 1
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 2
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita1",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 3
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita2",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 4
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita3",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 5
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita4",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 6
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita5",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 7
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita6",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 8
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita7",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 9
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita8",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 10
+  }
+][
+  {
+    "customer_address": "k",
+    "customer_name": "g",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 1
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 2
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita1",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 3
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita2",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 4
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita3",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 5
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita4",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 6
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita5",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 7
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita6",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 8
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita7",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 9
+  },
+  {
+    "customer_address": "NC",
+    "customer_name": "Amrita8",
+    "creation_date": "2021-05-14T00:00:00",
+    "customer_id": 10
+  }
+]

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	
+	<db:config name="Mysql_DB" doc:name="Database Config" doc:id="37e6cba4-f6a7-4e27-ba13-82adcf249d6d" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Welcome123" database="training" />
+	</db:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="583b6a48-92f2-4a93-b573-26b953cb187d" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="fb29f7d3-22b6-48e2-8ddb-65224fa6e9ac" >
+		<file:connection workingDir="/Users/amritasrivastava/AnypointStudio/studio-workspace_Examples/fetch-custdetails-for-ids/src/main/resources" />
+	</file:config>
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="4623447c-007b-426d-a5e8-4120ef12687b" maxEntries="100" entryTtl="1" entryTtlUnit="DAYS" />
+	<flow name="fetch-custdetails-for-idsFlow" doc:id="88b54761-742c-4265-bea9-abcf6e3e5ef7" >
+		<http:listener doc:name="Listener" doc:id="447cb7d6-a819-49b6-b67a-65ba30e34ef3" config-ref="HTTP_Listener_config" path="/triggerDB"/>
+		<os:retrieve doc:name="Retrieve" doc:id="fd56ad7a-2771-49a7-9fbb-d7308498a380" key="customerId" objectStore="Object_store">
+			<os:default-value ><![CDATA[70]]></os:default-value>
+		</os:retrieve>
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="99f32569-a781-482f-ad9f-bd6abeec5f5c" variableName="customerId"/>
+		<db:select doc:name="Select" doc:id="0b9cad5f-40ae-47ae-acc5-dae07a07b197" config-ref="Mysql_DB">
+			<db:sql ><![CDATA[select customer_id from customer where customer_id > :Id limit 10]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{'Id':vars.customerId}]]]></db:input-parameters>
+		</db:select>
+		<os:store doc:name="Store" doc:id="6f339085-9a54-463e-932d-7991218925d1" key="customerId" objectStore="Object_store">
+			<os:value ><![CDATA[#[payload[0].customer_id]]]></os:value>
+		</os:store>
+		<logger level="INFO" doc:name="Logger" doc:id="434b1c29-87fb-4572-a79b-5765314854e1" message="Response for customer id #[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="ee4c1867-0407-4e2c-a2b3-9c811eafdb53">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<parallel-foreach doc:name="Parallel For Each" doc:id="e82c4d4e-ee80-425f-8b8f-7f5bc8d259af" collection="#[payload]">
+			<set-variable value="#[payload.customer_id]" doc:name="Set Variable" doc:id="ef3a8973-89f6-4c63-a86f-9d801fe57d97" variableName="customer_id" />
+			<db:select doc:name="Select" doc:id="1d6bada1-ee96-4315-98e8-42880bcae22c" config-ref="Mysql_DB">
+				<db:sql><![CDATA[select * from customer where customer_id = :customerId]]></db:sql>
+				<db:input-parameters><![CDATA[#[{customerId:vars.customer_id }]]]></db:input-parameters>
+			</db:select>
+			<logger level="INFO" doc:name="Logger" doc:id="48837161-e6d1-422b-b5bc-4afe9e950ce1" message="#[payload]"/>
+		</parallel-foreach>
+		<ee:transform doc:name="Transform Message" doc:id="6b774a08-0bf9-4161-9ea6-525e0af7a3d1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map()->
+{  
+	'Customer $$' : $.payload reduce($)
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Write" doc:id="7e2b75ed-fac4-4645-89a0-bcfb70d104ef" config-ref="File_Config" path="output" mode="APPEND"/>
+		<logger level="INFO" doc:name="Logger" doc:id="793ed459-b428-4c2e-82d7-ea8a17195d17" message="#[payload]"/>
+	</flow>
+	<flow name="Copy_of_fetch-custdetails-for-idsFlow" doc:id="5e088f05-b72b-4049-8100-9411c71039bc" initialState="stopped">
+		<db:listener table="Customer" doc:name="Copy_of_On Table Row" doc:id="6f17181f-e1c0-42e8-b168-2bfaf71d291e" config-ref="Mysql_DB" watermarkColumn="customer_id" idColumn="customer_id" maxRows="3" >
+			<reconnect />
+			<scheduling-strategy >
+				<fixed-frequency frequency="30" timeUnit="SECONDS" />
+			</scheduling-strategy>
+		</db:listener>
+		<ee:transform doc:name="Copy_of_Transform Message" doc:id="89296d4f-bf7a-4070-91ca-3391641ca9a1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[payload]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Copy_of_Logger" doc:id="2bd51be6-9afc-42dd-ab17-78de4ef1b10c" message="#[payload]" />
+		<parallel-foreach doc:name="Copy_of_Parallel For Each" doc:id="ecaa0e4c-c45a-4347-ab09-9b67f7b2e9ea" collection="#[payload]" target="Result" >
+			<set-variable value="#[payload.customer_id]" doc:name="Copy_of_Set Variable" doc:id="6abcb334-825a-4e3b-910e-84e3c2220d49" variableName="customer_id" />
+			<db:select doc:name="Copy_of_Select" doc:id="d08d82ed-aab7-4456-b823-a93956f5b84d" config-ref="Mysql_DB" >
+				<db:sql ><![CDATA[select * from customer where customer_id = :customerId]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{customerId:vars.customer_id }]]]></db:input-parameters>
+			</db:select>
+			<logger level="INFO" doc:name="Copy_of_Logger" doc:id="f61fb4e9-85ae-4d76-8f12-9b4f6268275d" message="#[payload]" />
+		</parallel-foreach>
+		<ee:transform doc:name="Copy_of_Transform Message" doc:id="969d26b9-0ae7-45d4-9dae-53e33690bfd2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.Result]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Copy_of_Write" doc:id="a2efa4bd-5e7f-464c-9519-2b553831593c" config-ref="File_Config" path="output" />
+		<logger level="INFO" doc:name="Copy_of_Logger" doc:id="87fe4c44-c918-4962-bf23-1b2f8f475075" message="#[payload]" />
+	</flow>
+</mule>

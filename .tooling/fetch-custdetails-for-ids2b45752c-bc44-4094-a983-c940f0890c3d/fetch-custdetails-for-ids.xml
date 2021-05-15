@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	
+	<db:config name="DerbyDb" doc:name="Database Config" doc:id="37e6cba4-f6a7-4e27-ba13-82adcf249d6d" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Welcome123" database="training" />
+	</db:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="583b6a48-92f2-4a93-b573-26b953cb187d" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="fetch-custdetails-for-idsFlow" doc:id="4b899b89-eff3-4490-a395-31f3c25b219f" >
+		<http:listener doc:name="Listener" doc:id="71657896-3713-42a1-9bfc-f8f8fc681f6f" config-ref="HTTP_Listener_config" path="/create"/>
+		<db:execute-ddl doc:name="Execute DDL" doc:id="ef0de691-05df-46fa-baf1-892735a45a97" config-ref="DerbyDb">
+			<db:sql ><![CDATA[create table Customer(
+   customer_id INT NOT NULL,
+   customer_name VARCHAR(100) NOT NULL,
+   customer_address VARCHAR(40) NOT NULL,
+  creation_date DATE,
+   PRIMARY KEY ( customer_id )
+);]]></db:sql>
+		</db:execute-ddl>
+		<logger level="INFO" doc:name="Logger" doc:id="7d2ff300-87bc-474b-90ec-8848bb0236ce" message="#[payload]"/>
+	</flow>
+</mule>

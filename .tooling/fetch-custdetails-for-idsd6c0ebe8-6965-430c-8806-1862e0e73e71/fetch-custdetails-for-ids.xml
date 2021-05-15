@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	
+	<db:config name="Mysql_DB" doc:name="Database Config" doc:id="37e6cba4-f6a7-4e27-ba13-82adcf249d6d" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Welcome123" database="training" />
+	</db:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="583b6a48-92f2-4a93-b573-26b953cb187d" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="fetch-custdetails-for-idsFlow" doc:id="88b54761-742c-4265-bea9-abcf6e3e5ef7" >
+		<db:listener doc:name="On Table Row" doc:id="1e4d1419-ce4c-4a16-b488-e32a9890171e" config-ref="DerbyDb">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+		</db:listener>
+	</flow>
+</mule>

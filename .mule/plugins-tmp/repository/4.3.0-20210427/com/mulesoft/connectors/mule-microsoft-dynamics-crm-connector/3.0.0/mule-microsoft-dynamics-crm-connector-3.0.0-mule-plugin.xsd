@@ -1,0 +1,663 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.mulesoft.org/schema/mule/microsoft-dynamics-crm" attributeFormDefault="unqualified" elementFormDefault="qualified">
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace"></xs:import>
+  <xs:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd"></xs:import>
+  <xs:import namespace="http://www.mulesoft.org/schema/mule/core" schemaLocation="http://www.mulesoft.org/schema/mule/core/current/mule.xsd"></xs:import>
+  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" substitutionGroup="mule:abstract-shared-extension" name="dynamics-crm-config">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mule:abstractExtensionType">
+          <xs:sequence minOccurs="1" maxOccurs="1">
+            <xs:element minOccurs="1" maxOccurs="1" ref="mule:abstractConnectionProvider"></xs:element>
+            <xs:element minOccurs="0" maxOccurs="1" ref="mule:expiration-policy"></xs:element>
+          </xs:sequence>
+          <xs:attribute type="xs:string" use="required" name="name">
+            <xs:annotation>
+              <xs:documentation>The identifier of this element used to reference it in other components</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" substitutionGroup="mule:abstractConnectionProvider" name="ntlm-connection">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mule:abstractConnectionProviderType">
+          <xs:sequence minOccurs="0" maxOccurs="1">
+            <xs:element minOccurs="0" maxOccurs="1" ref="mule:reconnection"></xs:element>
+            <xs:element minOccurs="0" maxOccurs="1" ref="mule:pooling-profile"></xs:element>
+          </xs:sequence>
+          <xs:attribute type="mule:expressionString" use="required" name="username"></xs:attribute>
+          <xs:attribute type="mule:expressionString" use="required" name="password"></xs:attribute>
+          <xs:attribute type="mule:expressionString" use="required" name="organizationServiceUrl"></xs:attribute>
+          <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="disableCnCheck"></xs:attribute>
+          <xs:attribute type="mule:expressionString" use="optional" name="gatewayRouterServiceAddress"></xs:attribute>
+          <xs:attribute type="mule:expressionInt" use="optional" default="0" name="readTimeout">
+            <xs:annotation>
+              <xs:documentation>Specifies the amount of time, in milliseconds, that the consumer will wait for a response before it times out. Default value is 0, which means infinite.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:expressionInt" use="optional" default="0" name="connectionTimeout">
+            <xs:annotation>
+              <xs:documentation>Specifies the amount of time, in milliseconds, that the consumer will attempt to establish a connection before it times out. Default value is 0, which means infinite.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:expressionString" use="optional" name="proxyHost">
+            <xs:annotation>
+              <xs:documentation>Hostname of the proxy. If this property is not set then no proxy will be used, otherwise a proxy will be used, but a proxy host must be specified.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:expressionInt" use="optional" name="proxyPort">
+            <xs:annotation>
+              <xs:documentation>Port of the proxy. If host is set then this property must be set and cannot be a negative number.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:expressionString" use="optional" name="proxyUsername">
+            <xs:annotation>
+              <xs:documentation>Username used to authenticate against the proxy. If this property is not set then no authentication is going to be used against the proxy, otherwise this value must be specified.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:expressionString" use="optional" name="proxyPassword">
+            <xs:annotation>
+              <xs:documentation>Password used to authenticate against the proxy.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element xmlns:mule="http://www.mulesoft.org/schema/mule/core" substitutionGroup="mule:abstractConnectionProvider" name="online-connection">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mule:abstractConnectionProviderType">
+          <xs:sequence minOccurs="0" maxOccurs="1">
+            <xs:element minOccurs="0" maxOccurs="1" ref="mule:reconnection"></xs:element>
+            <xs:element minOccurs="0" maxOccurs="1" ref="mule:pooling-profile"></xs:element>
+          </xs:sequence>
+          <xs:attribute type="mule:expressionString" use="required" name="username"></xs:attribute>
+          <xs:attribute type="mule:expressionString" use="required" name="password"></xs:attribute>
+          <xs:attribute type="mule:expressionString" use="required" name="organizationServiceUrl"></xs:attribute>
+          <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="disableCnCheck"></xs:attribute>
+          <xs:attribute type="mule:expressionInt" use="required" name="authenticationRetries">
+            <xs:annotation>
+              <xs:documentation>If the authentication process against Microsoft Online fails the first time the connector will attempt to re-authenticate this many times.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:expressionInt" use="optional" default="0" name="readTimeout">
+            <xs:annotation>
+              <xs:documentation>Specifies the amount of time, in milliseconds, that the consumer will wait for a response before it times out. Default value is 0, which means infinite.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:expressionInt" use="optional" default="0" name="connectionTimeout">
+            <xs:annotation>
+              <xs:documentation>Specifies the amount of time, in milliseconds, that the consumer will attempt to establish a connection before it times out. Default value is 0, which means infinite.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:expressionString" use="optional" name="proxyHost">
+            <xs:annotation>
+              <xs:documentation>Hostname of the proxy. If this property is not set then no proxy will be used, otherwise a proxy will be used, but a proxy host must be specified.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:expressionInt" use="optional" name="proxyPort">
+            <xs:annotation>
+              <xs:documentation>Port of the proxy. If host is set then this property must be set and cannot be a negative number.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:expressionString" use="optional" name="proxyUsername">
+            <xs:annotation>
+              <xs:documentation>Username used to authenticate against the proxy. If this property is not set then no authentication is going to be used against the proxy, otherwise this value must be specified.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:expressionString" use="optional" name="proxyPassword">
+            <xs:annotation>
+              <xs:documentation>Password used to authenticate against the proxy.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:expressionString" use="optional" name="stsMetadataUrl">
+            <xs:annotation>
+              <xs:documentation>(Optional) The STS's metadata exchange url. For ADFS this is usually https://mycompany-sts.com/adfs/services/trust/mex.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute type="mule:expressionString" use="optional" name="stsUsernamePortQname">
+            <xs:annotation>
+              <xs:documentation>(Optional) The name of port that accepts username/password credentials as described in the STS's metadata exchange url. This value has to be specified as a Qname in the format '{http://schemas.microsoft.com/ws/2008/06/identity/securitytokenservice}UserNameWSTrustBinding_IWSTrust13Async'.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element xmlns="http://www.mulesoft.org/schema/mule/microsoft-dynamics-crm" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="AssociateType" substitutionGroup="mule:abstract-operator" name="associate">
+    <xs:annotation>
+      <xs:documentation>Create links between records.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="AssociateType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-reconnection-strategy"></xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="related-entities-ids">
+            <xs:annotation>
+              <xs:documentation>A List&lt;String&gt; with the related entity records ids to associate.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="related-entities-id">
+                  <xs:complexType>
+                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:expressionString" use="required" name="logicalName">
+          <xs:annotation>
+            <xs:documentation>The logical name of the entity.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="id">
+          <xs:annotation>
+            <xs:documentation>The id of the record to which the related records are associated.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="relationshipEntityRoleIsReferenced">
+          <xs:annotation>
+            <xs:documentation>false: when the primary entity record is Referencing the record to associate; true: when the primary entity record is Referenced by the record to associate.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="relationshipSchemaName">
+          <xs:annotation>
+            <xs:documentation>The name of the relationship to create the link.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="relatedEntitiesIds">
+          <xs:annotation>
+            <xs:documentation>A List&lt;String&gt; with the related entity records ids to associate.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.mulesoft.org/schema/mule/microsoft-dynamics-crm" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="CreateType" substitutionGroup="mule:abstract-operator" name="create">
+    <xs:annotation>
+      <xs:documentation>Create a new record.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="CreateType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-reconnection-strategy"></xs:element>
+          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="attributes">
+            <xs:annotation>
+              <xs:documentation>The attributes of the record as a Map&lt;String, Object&gt;.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:expressionString" use="required" name="logicalName">
+          <xs:annotation>
+            <xs:documentation>The logical name of the entity.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="target">
+          <xs:annotation>
+            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
+          <xs:annotation>
+            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.mulesoft.org/schema/mule/microsoft-dynamics-crm" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="CreateMultipleType" substitutionGroup="mule:abstract-operator" name="create-multiple">
+    <xs:annotation>
+      <xs:documentation>Create a several new record.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="CreateMultipleType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-reconnection-strategy"></xs:element>
+          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="list-of-attributes">
+            <xs:annotation>
+              <xs:documentation>The list of attributes of the record as a List&lt;Map&lt;String, Object&gt;&gt;.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:expressionString" use="required" name="logicalName">
+          <xs:annotation>
+            <xs:documentation>The logical name of the entity.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="useSingleTransaction">
+          <xs:annotation>
+            <xs:documentation>If supported (CRM 2016 and above) use a single transaction to create all items, if anyone fails then rollback all.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="target">
+          <xs:annotation>
+            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
+          <xs:annotation>
+            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.mulesoft.org/schema/mule/microsoft-dynamics-crm" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="DeleteType" substitutionGroup="mule:abstract-operator" name="delete">
+    <xs:annotation>
+      <xs:documentation>Delete a record.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="DeleteType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-reconnection-strategy"></xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:expressionString" use="required" name="logicalName">
+          <xs:annotation>
+            <xs:documentation>The logical name of the entity.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="id">
+          <xs:annotation>
+            <xs:documentation>The id of the record to delete.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.mulesoft.org/schema/mule/microsoft-dynamics-crm" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="DeleteMultipleType" substitutionGroup="mule:abstract-operator" name="delete-multiple">
+    <xs:annotation>
+      <xs:documentation>Delete multiple records.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="DeleteMultipleType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-reconnection-strategy"></xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="ids">
+            <xs:annotation>
+              <xs:documentation>The ids of the records to delete.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="id">
+                  <xs:complexType>
+                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:expressionString" use="required" name="logicalName">
+          <xs:annotation>
+            <xs:documentation>The logical name of the entity.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="ids">
+          <xs:annotation>
+            <xs:documentation>The ids of the records to delete.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="useSingleTransaction">
+          <xs:annotation>
+            <xs:documentation>If supported (CRM 2016 and above) use a single transaction to delete all items, if anyone fails then rollback all.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="target">
+          <xs:annotation>
+            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
+          <xs:annotation>
+            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.mulesoft.org/schema/mule/microsoft-dynamics-crm" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="DisassociateType" substitutionGroup="mule:abstract-operator" name="disassociate">
+    <xs:annotation>
+      <xs:documentation>Delete a link between records.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="DisassociateType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-reconnection-strategy"></xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" name="related-entities-ids">
+            <xs:annotation>
+              <xs:documentation>A List&lt;String&gt; with the related entity records ids to disassociate.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="related-entities-id">
+                  <xs:complexType>
+                    <xs:attribute type="mule:expressionString" use="required" name="value"></xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:expressionString" use="required" name="logicalName">
+          <xs:annotation>
+            <xs:documentation>The logical name of entity.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="id">
+          <xs:annotation>
+            <xs:documentation>The id of the record from which the related records are disassociated.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="relationshipEntityRoleIsReferenced">
+          <xs:annotation>
+            <xs:documentation>false: when the primary entity record is Referencing the record to associate; true: when the primary entity record is Referenced by the record to associate.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="relationshipSchemaName">
+          <xs:annotation>
+            <xs:documentation>The name of the relationship to delete the link.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionList" use="optional" name="relatedEntitiesIds">
+          <xs:annotation>
+            <xs:documentation>A List&lt;String&gt; with the related entity records ids to disassociate.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.mulesoft.org/schema/mule/microsoft-dynamics-crm" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ExecuteType" substitutionGroup="mule:abstract-operator" name="execute">
+    <xs:annotation>
+      <xs:documentation>Executes a message in the form of a request, and returns a response.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ExecuteType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-reconnection-strategy"></xs:element>
+          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="request-parameters">
+            <xs:annotation>
+              <xs:documentation>[DEPRECATED] This parameter will be removed from the configuration in the near future. Set the #[payload] correctly before calling the connector.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:expressionString" use="required" name="requestName">
+          <xs:annotation>
+            <xs:documentation>The logical name of request make.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" name="requestId">
+          <xs:annotation>
+            <xs:documentation>The id of the request to make.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="target">
+          <xs:annotation>
+            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
+          <xs:annotation>
+            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.mulesoft.org/schema/mule/microsoft-dynamics-crm" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="ExecuteMultipleType" substitutionGroup="mule:abstract-operator" name="execute-multiple">
+    <xs:annotation>
+      <xs:documentation>Executes multiple messages in the form of a request, and returns their respective responses.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ExecuteMultipleType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-reconnection-strategy"></xs:element>
+          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="requests">
+            <xs:annotation>
+              <xs:documentation>This parameter is a list of the requests (OrganizationRequest or Map). Set the #[payload] correctly before calling the connector.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="useSingleTransaction">
+          <xs:annotation>
+            <xs:documentation>If supported (CRM 2016 and above) use a single transaction to execute all requests, if anyone fails then rollback all.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="target">
+          <xs:annotation>
+            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
+          <xs:annotation>
+            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.mulesoft.org/schema/mule/microsoft-dynamics-crm" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="RetrieveType" substitutionGroup="mule:abstract-operator" name="retrieve">
+    <xs:annotation>
+      <xs:documentation>Retrieve a record.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RetrieveType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-reconnection-strategy"></xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:expressionString" use="required" name="logicalName">
+          <xs:annotation>
+            <xs:documentation>The logical name of the entity.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="id">
+          <xs:annotation>
+            <xs:documentation>The id of the record to retrieve.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="target">
+          <xs:annotation>
+            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
+          <xs:annotation>
+            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.mulesoft.org/schema/mule/microsoft-dynamics-crm" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="RetrieveMultipleByQueryType" substitutionGroup="mule:abstract-operator" name="retrieve-multiple-by-query">
+    <xs:annotation>
+      <xs:documentation>Retrieve multiple records. &lt;p&gt; The definition of the Microsoft XML Query Language can be found in the Schema Definition in this link: &lt;a href="http://msdn.microsoft.com/en-us/library/gg328332.aspx" &gt;http://msdn.microsoft.com/en-us/library/gg328332.aspx&lt;/a&gt; &lt;p&gt; The aggregation examples can be found in this link: &lt;a href="http://msdn.microsoft.com/en-us/library/gg328122.aspx" &gt;http://msdn.microsoft.com/en-us/library/gg328122.aspx&lt;/a&gt;</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RetrieveMultipleByQueryType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-object-streaming-strategy"></xs:element>
+          <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-reconnection-strategy"></xs:element>
+          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="query">
+            <xs:annotation>
+              <xs:documentation>For DataSense Query Language, the DSQL query. For Native Query Language, the Fetch XML query.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:expressionInt" use="optional" default="50" name="itemsPerPage">
+          <xs:annotation>
+            <xs:documentation>The number of items returned per page.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionInt" use="optional" default="-1" name="singlePageNumber">
+          <xs:annotation>
+            <xs:documentation>If greater than 0, returns only that specific page.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="target">
+          <xs:annotation>
+            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
+          <xs:annotation>
+            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.mulesoft.org/schema/mule/microsoft-dynamics-crm" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="UpdateType" substitutionGroup="mule:abstract-operator" name="update">
+    <xs:annotation>
+      <xs:documentation>Update a record's attributes.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="UpdateType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-reconnection-strategy"></xs:element>
+          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="attributes">
+            <xs:annotation>
+              <xs:documentation>The attributes to be updated as a Map&lt;String, Object&gt;.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:expressionString" use="required" name="logicalName">
+          <xs:annotation>
+            <xs:documentation>The logical name of the entity.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="required" name="id">
+          <xs:annotation>
+            <xs:documentation>The id of the record to update.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element xmlns="http://www.mulesoft.org/schema/mule/microsoft-dynamics-crm" xmlns:mule="http://www.mulesoft.org/schema/mule/core" type="UpdateMultipleType" substitutionGroup="mule:abstract-operator" name="update-multiple">
+    <xs:annotation>
+      <xs:documentation>Update a record's attributes.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="UpdateMultipleType">
+    <xs:complexContent>
+      <xs:extension xmlns:mule="http://www.mulesoft.org/schema/mule/core" base="mule:abstractOperatorType">
+        <xs:sequence minOccurs="0" maxOccurs="1">
+          <xs:element minOccurs="0" maxOccurs="1" ref="mule:abstract-reconnection-strategy"></xs:element>
+          <xs:element type="xs:string" minOccurs="0" maxOccurs="1" name="list-of-attributes">
+            <xs:annotation>
+              <xs:documentation>The list of attributes of the record as a List&lt;Map&lt;String, Object&gt;&gt;.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute type="mule:expressionString" use="required" name="logicalName">
+          <xs:annotation>
+            <xs:documentation>The logical name of the entity.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionBoolean" use="optional" default="false" name="useSingleTransaction">
+          <xs:annotation>
+            <xs:documentation>If supported (CRM 2016 and above) use a single transaction to update all items, if anyone fails then rollback all.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="required" name="config-ref">
+          <xs:annotation>
+            <xs:documentation>The name of the configuration to be used to execute this component</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" use="optional" name="target">
+          <xs:annotation>
+            <xs:documentation>The name of a variable on which the operation's output will be placed</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="mule:expressionString" use="optional" default="#[payload]" name="targetValue">
+          <xs:annotation>
+            <xs:documentation>An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<file:config name="File_Config" doc:name="File Config" doc:id="22510066-4005-477a-8220-24b9c5cb185b" >
+		<file:connection workingDir="${File.workingDir}" />
+	</file:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="5011b2b3-9b7f-4fa2-b0d0-8d601e8cafb3" file="config.yaml" />
+	<flow name="for-each-exampleFlow" doc:id="f546fecc-5efd-4f83-a20d-b512e34e3b6c" >
+		<file:listener doc:name="On New or Updated File" doc:id="a8fecec6-f3ab-47b2-8d0a-84e9b01934a6" config-ref="File_Config" directory="inputFile" recursive="false" moveToDirectory="readFile" renameTo="#[attributes.fileName default &quot;file&quot; as String 
+++ &quot;.&quot; ++ (now() as String {format: &quot;yyyy_MM_dd_HH_mm_ss_SSS&quot;})
+ ++ '.success']">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+			<file:matcher filenamePattern="*.csv" />
+		</file:listener>
+		<foreach doc:name="For Each" doc:id="fd521da7-9b93-41e6-8d09-82fc23b27917" />
+	</flow>
+</mule>

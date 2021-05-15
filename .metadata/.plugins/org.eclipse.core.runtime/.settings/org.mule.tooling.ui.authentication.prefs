@@ -1,0 +1,6 @@
+authenticated.users=[{"id"\:"29c886cc-e846-440a-b158-0675512de601","token"\:"63522322-5a66-41bc-bc57-15272a794cfd","userId"\:"lina14sri","email"\:"lina14sri@gmail.com","refreshToken"\:"","baseUrl"\:"https\://anypoint.mulesoft.com/","org"\:{"name"\:"AA","id"\:"d41509d1-70c4-49d2-9a36-63791a094518","isMaster"\:true}}]
+current.token=63522322-5a66-41bc-bc57-15272a794cfd
+current.user=lina14sri
+eclipse.preferences.version=1
+expiration.time=7
+org.mule.tooling.ui.properties.enable.api.dependencies=true

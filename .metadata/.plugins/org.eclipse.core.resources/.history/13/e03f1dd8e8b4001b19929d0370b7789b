@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	<db:config name="Mysql_DB" doc:name="Database Config" doc:id="37e6cba4-f6a7-4e27-ba13-82adcf249d6d" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Welcome123" database="training" />
+	</db:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="583b6a48-92f2-4a93-b573-26b953cb187d" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="fetch-custdetails-for-idsFlow" doc:id="88b54761-742c-4265-bea9-abcf6e3e5ef7" >
+		<db:listener doc:name="On Table Row" doc:id="1e4d1419-ce4c-4a16-b488-e32a9890171e" config-ref="Mysql_DB" table="Customer" idColumn="customer_id" watermarkColumn="customer_id">
+			<reconnect />
+			<scheduling-strategy >
+				<fixed-frequency frequency="10" timeUnit="SECONDS"/>
+			</scheduling-strategy>
+		</db:listener>
+		<ee:transform doc:name="Transform Message" doc:id="ee4c1867-0407-4e2c-a2b3-9c811eafdb53" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[payload]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="f5be7a84-9427-4fd4-b21a-d4fff509933a" message="#[payload]"/>
+		<parallel-foreach doc:name="Parallel For Each" doc:id="e82c4d4e-ee80-425f-8b8f-7f5bc8d259af" collection="#[payload]">
+			<set-variable value="#[payload.customer_id]" doc:name="Set Variable" doc:id="ef3a8973-89f6-4c63-a86f-9d801fe57d97" variableName="customer_id"/>
+			<db:select doc:name="Select" doc:id="1d6bada1-ee96-4315-98e8-42880bcae22c" config-ref="Mysql_DB">
+				<db:sql ><![CDATA[select * from customer where customer_id = :customer_id]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{customer_id: vars.customer_id}]]]></db:input-parameters>
+			</db:select>
+			<ee:transform doc:name="Transform Message" doc:id="99f5f8a3-7647-479e-b7f2-a2a45bdd320a" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logger" doc:id="48837161-e6d1-422b-b5bc-4afe9e950ce1" message="#[payload]"/>
+		</parallel-foreach>
+		<ee:transform doc:name="Transform Message" doc:id="6b774a08-0bf9-4161-9ea6-525e0af7a3d1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map() -> {
+	($$): $.payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="793ed459-b428-4c2e-82d7-ea8a17195d17" message="#[payload]"/>
+	</flow>
+</mule>

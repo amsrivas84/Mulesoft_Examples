@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<file:config name="File_Config" doc:name="File Config" doc:id="22510066-4005-477a-8220-24b9c5cb185b" >
+		<file:connection workingDir="${File.workingDir}" />
+	</file:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="5011b2b3-9b7f-4fa2-b0d0-8d601e8cafb3" file="config.yaml" />
+	<flow name="for-each-exampleFlow" doc:id="f546fecc-5efd-4f83-a20d-b512e34e3b6c" >
+		<file:listener doc:name="On New or Updated File" doc:id="a8fecec6-f3ab-47b2-8d0a-84e9b01934a6" config-ref="File_Config" directory="inputFile" recursive="false" moveToDirectory="readFile" renameTo="#[attributes.fileName default &quot;file&quot; as String 
+++ &quot;.&quot; ++ (now() as String {format: &quot;yyyy_MM_dd_HH_mm_ss_SSS&quot;})
+ ++ '.success']">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+			<file:matcher filenamePattern="*.csv" />
+		</file:listener>
+		<ee:transform doc:name="Transform Message" doc:id="62d1dda8-19ce-4777-8d62-41ec27880981" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[0]" doc:name="Set Variable" doc:id="fc31b6ca-dc7b-4731-a45a-21942d71a4f3" variableName="number"/>
+		<foreach doc:name="For Each" doc:id="8b92758d-a6ce-4587-94b6-38d68a032b24" >
+			<set-payload value="Processed" doc:name="Set Payload" doc:id="e89ff646-a612-4a2c-9cc0-5d2b0c62c2a5" />
+			<set-variable value="#[vars.number as Number +1]" doc:name="Set Variable" doc:id="0d4aa5ae-5cf2-47f6-807b-2a84b62fbe67" variableName="number"/>
+			<logger level="INFO" doc:name="Logger" doc:id="395fcf24-b7cb-4068-be27-918ece278f37" message="#[payload]"/>
+		</foreach>
+		<logger level="INFO" doc:name="Logger" doc:id="af003c18-ac1f-4b20-a1ed-b2e03b7b41eb" message='#[vars.number]'/>
+		<logger level="INFO" doc:name="Logger" doc:id="bbfd5ecd-53fd-438b-b84b-d336e950033e" message='"payload is "++#[payload]'/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2d87bc76-356c-4bec-9ed9-8231e1002171" >
+				<logger level="INFO" doc:name="Logger" doc:id="9dc18d1c-0688-47db-a4b6-06ea0cbf11df" message="Error Occured"/>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

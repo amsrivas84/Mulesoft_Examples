@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<file:config name="File_Config" doc:name="File Config" doc:id="22510066-4005-477a-8220-24b9c5cb185b" >
+		<file:connection workingDir="${File.workingDir}" />
+	</file:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="5011b2b3-9b7f-4fa2-b0d0-8d601e8cafb3" file="config.yaml" />
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="e5778c90-588a-4256-a774-cbec1488c346" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="for-each-exampleFlow" doc:id="f546fecc-5efd-4f83-a20d-b512e34e3b6c" initialState="stopped">
+		<file:listener doc:name="On New or Updated File" doc:id="a8fecec6-f3ab-47b2-8d0a-84e9b01934a6" config-ref="File_Config" directory="inputFile" recursive="false" moveToDirectory="readFile">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+			<file:matcher filenamePattern="*.csv" />
+		</file:listener>
+		<ee:transform doc:name="Transform Message" doc:id="62d1dda8-19ce-4777-8d62-41ec27880981" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[0]" doc:name="Set Variable" doc:id="fc31b6ca-dc7b-4731-a45a-21942d71a4f3" variableName="number"/>
+		<foreach doc:name="For Each" doc:id="8b92758d-a6ce-4587-94b6-38d68a032b24" batchSize="3">
+			<set-variable value="#[vars.number as Number +1]" doc:name="Set Variable" doc:id="0d4aa5ae-5cf2-47f6-807b-2a84b62fbe67" variableName="number" />
+			<logger level="INFO" doc:name="Logger" doc:id="395fcf24-b7cb-4068-be27-918ece278f37" message="#[payload.Region]"/>
+		</foreach>
+		<logger level="INFO" doc:name="Logger" doc:id="af003c18-ac1f-4b20-a1ed-b2e03b7b41eb" message='variable value is   #[vars.number ] and payload is #[payload]'/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2d87bc76-356c-4bec-9ed9-8231e1002171" >
+				<logger level="INFO" doc:name="Logger" doc:id="9dc18d1c-0688-47db-a4b6-06ea0cbf11df" message="Error Occured"/>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="Parallel_for-each-exampleFlow" doc:id="917589ab-e1b9-4218-a93d-9532d109db95" initialState="stopped">
+		<file:listener doc:name="On New or Updated File" doc:id="39505dca-2c8c-4f0a-b3e5-6c820891e648" config-ref="File_Config" directory="inputFile" recursive="false" moveToDirectory="readFile"  >
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+			<file:matcher filenamePattern="*.csv" />
+		</file:listener>
+		<ee:transform doc:name="Transform Message" doc:id="66c0dd4b-0c2d-4321-8f6f-a085d9f3d3f6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[0]" doc:name="Set Variable" doc:id="98978112-bd92-41f7-a778-a4d758ca73a6" variableName="number" />
+		<parallel-foreach doc:name="Parallel For Each" doc:id="a4bfb00e-353c-4c6c-84ae-b36e79cced57" maxConcurrency="2">
+			<set-variable value="#[vars.number+1]" doc:name="Set Variable" doc:id="3ee59722-2ad9-4c51-86df-441aef7c6187" variableName="number" />
+			<logger level="INFO" doc:name="Logger" doc:id="b0ef4ca6-e8c8-4435-9e58-2f982f94640e" message="#[payload]" />
+		</parallel-foreach>
+		<ee:transform doc:name="Transform Message" doc:id="10263e31-626f-4a0e-a677-eb6502cba300" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="47f2de1d-c527-4095-a9e5-f4e24f5868aa" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map()->
+{  
+	'Region $$' : $.payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="7a298650-9521-4e76-b154-45248e8b56f5" message=" #[payload]" />
+	</flow>
+	<flow name="parallel-for-each-httpexampleFlow" doc:id="8afc44e3-b6a2-4539-a5a7-bfb81219d317" >
+		<http:listener doc:name="Listener" doc:id="9f8e51c1-0f6d-4673-9a68-47280261e7a9" />
+	</flow>
+</mule>
